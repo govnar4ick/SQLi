@@ -1,0 +1,33 @@
+import sqlite3
+
+
+class DataBase:
+    def __init__(self, file):
+        self.con = sqlite3.connect(file)
+        self.cur = self.con.cursor()
+        self.create_table('score')
+
+    def create_table(self, table_name):
+        que_create = ''' CREATE TABLE IF NOT EXISTS {}(
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        score_points INTEGER
+        )'''.format(table_name)
+        self.cur.execute(table_name)
+        self.con.commit()
+    def get(self, que='SELECT * FROM score'):
+        rerurn self.cur.execute(que).fetchall()
+
+    def insert(self, name, score):
+
+    def __del__(self):
+
+
+data_base = DataBase('game.sqlite')
+data_base.insert('adamskilko2008',10)
+data_base.insert('dreamer14',4)
+data_base.insert('doly',15)
+
+data = data_base.get()
+for line in data:
+    print(line)
