@@ -1,0 +1,79 @@
+import sqlite3
+from random import choice
+
+class Users:
+    def __init__(self,file):
+        self.con = sqlite3.connect(file)
+        self.cur = self.con.cursor()
+        self.create_table('users')
+
+    def create_table(self,table_name):
+        que_create = '''CREATE TABLE IF NOT EXISTS {} (
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        cash INTEGER,
+        year INTEGER
+        )'''.format(table_name)
+        self.cur.execute(que_create)
+        self.con.commit()
+
+    def get(self, que='SELECT * FROM users'):
+        return self.cur.execute(que).fetchall()
+    def get_old_users(self, que='SELECT * FROM users ORDER BY year limit 3'):
+        return self.cur.execute(que).fetchall()
+
+    def insert(self,name,cash,year):
+        que_insert = f'''
+        INSERT INTO users(name, cash,year)
+        VALUES ('{name}',{cash},{year})
+        '''
+        self.cur.execute(que_insert)
+        self.con.commit()
+
+    def __del__(self):
+        self.con.close()
+
+    def delete_users(self,name):
+        que_insert = f'''
+        DELETE from users where name = "{name}"
+        
+        '''
+        self.cur.execute(que_insert)
+        self.con.commit()
+
+    def add_money(self,id,money):
+        que_insert = f'''
+        UPDATE users set cash = cash + {money} where id = {id}
+        '''
+        self.cur.execute(que_insert)
+        self.con.commit()
+
+
+data_base = Users('market.sqlite')
+#data_base.delete_user("skilko228")
+pool_name = ('m1hag','ник на русском','term1x','govnar')
+pool_cash = tuple(range(1,1000))
+pool_year = tuple(range(2008,2022))
+data_base.add_money(3,300)
+
+
+
+for i in range(10):
+    name_insert = choice(pool_name)
+    cash_insert = choice(pool_cash)
+    year_insert = choice(pool_year)
+    #data_base.insert(name_insert,cash_insert,year_insert)
+
+#data_base.insert("govnar",1000,2015)
+#data_base.insert("m1hag",4560,2012)
+#data_base.insert("term1x",11234,2021)
+#data_base.insert("nik na russkom",15,2000)
+#data_base.insert("skilko228",12,2077)
+
+
+
+
+data = data_base.get()
+for line in data:
+    print(line)
+#data_base.delete_user("skilko228")
