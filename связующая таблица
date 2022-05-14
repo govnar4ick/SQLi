@@ -1,0 +1,213 @@
+import sqlite3
+from random import choice
+
+class Users:
+    def __init__(self,file):
+        self.con = sqlite3.connect(file)
+        self.cur = self.con.cursor()
+        self.create_table('users')
+
+    def create_table(self,table_name):
+        que_create = '''CREATE TABLE IF NOT EXISTS {} (
+        id INTEGER PRIMARY KEY,
+        name TEXT, 
+        cash INTEGER,
+        year INTEGER
+        )'''.format(table_name)
+        self.cur.execute(que_create)
+        self.con.commit()
+
+    def get(self, que='SELECT * FROM users'):
+        return self.cur.execute(que).fetchall()
+    def get_old_users(self, que='SELECT * FROM users ORDER BY year limit 3'):
+        return self.cur.execute(que).fetchall()
+
+    def insert(self,name,cash,year):
+        que_insert = f'''
+        INSERT INTO users(name, cash,year)
+        VALUES ('{name}',{cash},{year})
+        '''
+        self.cur.execute(que_insert)
+        self.con.commit()
+
+    def __del__(self):
+        self.con.close()
+
+    def delete_users(self,name):
+        que_insert = f'''
+        DELETE from users where name = "{name}"
+        
+        '''
+        self.cur.execute(que_insert)
+        self.con.commit()
+
+    def add_money(self,id,money):
+        que_insert = f'''
+        UPDATE users set cash = cash + {money} where id = {id}
+        '''
+        self.cur.execute(que_insert)
+        self.con.commit()
+
+
+
+
+class Skin:
+    def __init__(self,file):
+        self.con = sqlite3.connect(file)
+        self.cur = self.con.cursor()
+        self.create_table('skin')
+
+    def create_table(self,table_name):
+        que_create = '''CREATE TABLE IF NOT EXISTS {} (
+        id INTEGER PRIMARY KEY,
+        name TEXT,
+        quality INTEGER,
+        price FLOAT,
+        rarity TEXT,
+        startrack BOOLEAN
+        )'''.format(table_name)
+        self.cur.execute(que_create)
+        self.con.commit()
+
+    def get(self, que='SELECT * FROM skin'):
+        return self.cur.execute(que).fetchall()
+
+    def insert(self,name,quality,price,rarity,startrack):
+        que_insert = f'''
+        INSERT INTO skin(name,quality,price,rarity,startrack)
+        VALUES ('{name}',{quality},{price},'{rarity}',{startrack})
+        '''
+        self.cur.execute(que_insert)
+        self.con.commit()
+
+    def __del__(self):
+        self.con.close()
+
+    def get_some_rarity(self,rarity):
+        que=f'''SELECT *FROM skin where rarity='{rarity}' '''
+        return self.cur.execute(que).fetchall()
+
+    def delete_users(self, name):
+        que_insert = f'''
+        DELETE from skin where name = "{name}" and id = {id}
+
+        '''
+        self.cur.execute(que_insert)
+        self.con.commit()
+
+    def get_some_st(self,startrack):
+        que=f'''SELECT *FROM skin where startrack={startrack} '''
+        return self.cur.execute(que).fetchall()
+
+
+
+
+class Inventory:
+    def __init__(self,file):
+        self.con = sqlite3.connect(file)
+        self.cur = self.con.cursor()
+        self.create_table('inventory')
+
+    def create_table(self,table_name):
+        que_create = '''CREATE TABLE IF NOT EXISTS {} (
+        id INTEGER PRIMARY KEY,
+        userId INTEGER FOREIGH KEY,
+        skinId INTEGER FOREIGH KEY
+        )'''.format(table_name)
+        self.cur.execute(que_create)
+        self.con.commit()
+    def get(self, que='SELECT * FROM inventory'):
+        return self.cur.execute(que).fetchall()
+
+    def insert(self,userId,skinId):
+        que_insert = f'''
+        INSERT INTO inventory(userId, skinId)
+        VALUES ({userId},{skinId})
+        '''
+        self.cur.execute(que_insert)
+        self.con.commit()
+
+    def __del__(self):
+        self.con.close()
+
+    def get_info_from_alltables(self):
+        que='''
+        Select Inventory.id as id,
+        skin.name as skin_name,
+        users.name as user_name
+        from Inventory
+        left JOIN users
+        on users.id = Userid
+        left JOIN skin
+        on skin.id = SkinId;
+        '''
+
+        return self.cur.execute(que).fetchall()
+
+
+
+data_base = Users('market.sqlite')
+#data_base.delete_user("skilko228")
+#pool_name = ('m1hag','ник на русском','term1x','govnar','kolan35','marader','smekta','german','saleri')
+#pool_cash = tuple(range(1,1000))
+#pool_year = tuple(range(2008,2022))
+#data_base.add_money(3,300)
+
+
+'''
+for i in range(5):
+    name_insert = choice(pool_name)
+    cash_insert = choice(pool_cash)
+    year_insert = choice(pool_year)
+    data_base.insert(name_insert,cash_insert,year_insert)
+'''
+'''
+data_base.insert("govnar",1000,2015)
+data_base.insert("m1hag",4560,2012)
+data_base.insert("term1x",11234,2021)
+data_base.insert("nik na russkom",15,2000)
+data_base.insert("skilko228",12,2077)
+skin_base = Skin('market.sqlite')
+skin_base.insert("АК 47|Затерянный кувшин",2,500,"Поношенный",True)
+skin_base.insert("Deagle|Пробитый орел",2,200,"После полевых испытаний",False)
+skin_base.insert("M4A4|Капушиновый воин",3,150,"Прямо с завода",True)
+skin_base.insert("MP7|Джавелиновый кринж",4,100,"Армейский",False)
+skin_base.insert("Бизон|Тарковчанин",5,1500,"Тайное",True)
+skin_base.insert("AWP|Рыготина Дракона",1,14.5,"Ширпотреп",False)
+skin_base.insert("TEK-9|Ниггерская пушка",4,300,"После полевых испытаний",False)
+skin_base.insert("M9 BAYONET|Армянский нож",5,1500000,"Прямо с завода",True)
+skin_base.insert("Молотов|Горящий пукан Германа",3,145,"Поношенное",False)
+'''
+skin_base = Skin('market.sqlite')
+
+inventory_base = Inventory('market.sqlite')
+'''inventory_base.insert(5,8)
+inventory_base.insert(5,2)
+inventory_base.insert(1,10)
+inventory_base.insert(1,3)
+inventory_base.insert(6,9)
+inventory_base.insert(6,1)
+inventory_base.insert(2,4)
+inventory_base.insert(2,5)
+inventory_base.insert(3,8)
+inventory_base.insert(3,4)
+inventory_base.insert(4,6)
+inventory_base.insert(4,2)
+inventory_base.insert(7,3)
+inventory_base.insert(7,7)
+inventory_base.insert(8,5)
+inventory_base.insert(8,2)
+inventory_base.insert(9,3)
+inventory_base.insert(9,5)
+inventory_base.insert(10,3)
+inventory_base.insert(10,7)'''
+
+
+
+
+
+
+data = inventory_base.get_info_from_alltables()
+for line in data:
+    print(line)
+#data_base.delete_user("skilko228")
