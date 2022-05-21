@@ -1,0 +1,47 @@
+import tkinter as tk
+from tkinter import ttk
+import random
+from tkinter import PhotoImage
+
+def fill_table(user_table,data):
+    for i in range(len(data)):
+        user_table.insert(parent='', index='end', iid=i, text='', values=data[i])
+
+
+
+master = tk.Tk()
+
+master.geometry('800x800')
+
+
+frame = tk.Frame(master)
+frame.pack()
+user_table = ttk.Treeview(frame)
+user_table.column('#0',width= 0)
+user_table['columns'] = ('id','name','cash','year')
+user_table.heading('id',text = 'id')
+user_table.heading('name',text = 'name')
+user_table.heading("cash",text = "cash")
+user_table.heading('year', text = 'year')
+data = [(1, 'term1x', 140, 2013), (2, 'smekta', 436, 2008), (3, 'kolan35', 505, 2021), (4, 'saleri', 770, 2012), (5, 'smekta', 703, 2011), (6, 'govnar', 1000, 2015), (7, 'm1hag', 4560, 2012), (8, 'term1x', 11234, 2021), (9, 'nik na russkom', 15, 2000), (10, 'skilko228', 12, 2077)]
+search_button = tk.Button(text = 'НАЖАТЬ БЕСПЛАТО',width = 15,height =5)
+search_button.config(command =fill_table(user_table,data))
+search = ''
+search_entry = tk.Entry(textvariable= search)
+
+
+
+WIDTH =1280
+HEIGHT = 600
+
+canvas = tk.Canvas(master,bg ="#FCAB08",
+                        width = WIDTH, height = HEIGHT)
+search_entry.pack()
+search_button.pack()
+#fill_table(user_table,data)
+user_table.pack()
+canvas.pack()
+
+master.mainloop()
+
+
